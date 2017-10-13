@@ -11,3 +11,5 @@
  --存放可执行文件
 /Exception Handler
  --目录下存放的是工程异常所定义的类
+/GUI Sources
+ --目录下存放的是和GUI有关的源文件
