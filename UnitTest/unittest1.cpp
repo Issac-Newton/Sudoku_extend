@@ -378,28 +378,21 @@ namespace ModeTest
 			}
 			catch (exception& e)
 			{
-				cout << e.what();
+				Assert::IsTrue(typeid(e) == typeid(ParametersNumberException));
 			}
 		}
 
 		//文件不存在异常
 		TEST_METHOD(TestMethod9)
 		{
-			char c1[20] = { "sudoku.exe" };
-			char c2[20] = { "-s" };
-			char c3[20] = {"NotExist.txt"};
-			char ** command;
-			
-			command[0] = c1;
-			command[1] = c2;
-			command[2] = c3;
+			char* command[3] = { "sudoku.exe","-s","NotExist.txt" };
 			try
 			{
 				main(3,command);
 			}
 			catch (exception& e)
 			{
-				cout << e.what();
+				Assert::IsTrue(typeid(e) == typeid(FileNotExistException));
 			}
 		}
 
@@ -407,36 +400,38 @@ namespace ModeTest
 		TEST_METHOD(TestMethod10)
 		{
 			//-c
-			char* command[20] = { "sudoku.exe","-c","100000000" };
+			char* command[3] = { "sudoku.exe","-c","100000000" };
 			try
 			{
 				main(3, (char**)command);
 			}
 			catch (exception& e)
 			{
-				cout << e.what();
+				Assert::IsTrue(typeid(e) == typeid(NumberOutOfBoundException));
 			}
 
+
+
 			//-n
-			char* command1[20] = {"sudoku.txt","-n","10001","-m","1"};
+			char* command1[5] = {"sudoku.txt","-n","10001","-m","1"};
 			try
 			{
 				main(5, (char**)command1);
 			}
 			catch (exception& e)
 			{
-				cout << e.what();
+				Assert::IsTrue(typeid(e) == typeid(NumberOutOfBoundException));
 			}
 
 			//-m（模式错误）
-			char* command2[20] = { "sudoku.txt","-n","1000","-m","4" };
+			char* command2[5] = { "sudoku.txt","-n","1000","-m","4" };
 			try
 			{
 				main(5, (char**)command2);
 			}
 			catch (exception& e)
 			{
-				cout << e.what();
+				Assert::IsTrue(typeid(e) == typeid(ModeException));
 			}
 
 			//-r
@@ -447,7 +442,7 @@ namespace ModeTest
 			}
 			catch (exception& e)
 			{
-				cout << e.what();
+				Assert::IsTrue(typeid(e) == typeid(NumberOutOfBoundException));
 			}
 		}
 
@@ -455,39 +450,39 @@ namespace ModeTest
 		TEST_METHOD(TestMethod11)
 		{
 			//中间连接符不是~
-			char command[][20] = { "sudoku.exe","-n","10","-r","20-55"};
+			char* command[5] = { "sudoku.exe","-n","10","-r","20-55"};
 			try
 			{
-				main(5, (char**)command);
+				main(5, command);
 			}
 			catch (exception& e)
 			{
-				cout << e.what();
+				Assert::IsTrue(typeid(e) == typeid(RParametersException));
 			}
 
 			//大小颠倒
-			char command1[][20] = { "sudoku.exe","-n","10","-r","30~25" };
+			char* command1[20] = { "sudoku.exe","-n","10","-r","30~25" };
 			try
 			{
-				main(5, (char**)command);
+				main(5, command);
 			}
 			catch (exception& e)
 			{
-				cout << e.what();
+				Assert::IsTrue(typeid(e) == typeid(NumberOutOfBoundException));
 			}
 		}
 
 		//命令中存在不合法的字符
 		TEST_METHOD(TestMethod12)
 		{
-			char command[][20] = { "sudoku.exe","-nn","10","-r","20-55" };
+			char* command[20] = { "sudoku.exe","-nn","10","-r","20~55" };
 			try
 			{
 				main(5, (char**)command);
 			}
 			catch (exception& e)
 			{
-				cout << e.what();
+				Assert::IsTrue(typeid(e) == typeid(IllegalCharException));
 			}
 		}
 
@@ -495,32 +490,15 @@ namespace ModeTest
 		//数独无解
 		TEST_METHOD(TestMethod13)
 		{
-			char command[][20] = { "sudoku.exe","-s","puzzle.txt"};
+			char* command[20] = { "sudoku.exe","-s","puzzle.txt"};
 			try
 			{
-				main(3, (char**)command);
+				main(3,command);
 			}
 			catch (exception& e)
 			{
-				cout << e.what();
+				Assert::IsTrue(typeid(e) == typeid(NoSolutionException));
 			}
 		}
-
-		//数独中存在不合法的数字
-		TEST_METHOD(TestMethod14)
-		{
-			char command[][20] = { "sudoku.exe","-s","puzzle.txt" };
-			try
-			{
-				main(3, (char**)command);
-			}
-			catch (exception& e)
-			{
-				cout << e.what();
-			}
-
-		}
-
-
 	};
 }
