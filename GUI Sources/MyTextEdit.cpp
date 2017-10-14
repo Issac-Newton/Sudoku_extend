@@ -29,7 +29,7 @@ void MyTextEdit::focusOutEvent(QFocusEvent *e)
 	int length = str.count();
 	if (!isReadOnly())
 	{
-		setStyleSheet(QString::fromUtf8("font: 23pt \"\351\273\221\344\275\223\";""border: 1px solid grey;color:blue"));
+		setStyleSheet(QString::fromUtf8("font: 21pt \"\351\273\221\344\275\223\";""border: 1px solid grey;color:blue"));
 		if (!IsValidChar(str))
 		{
 			setPlainText("");

@@ -54,13 +54,13 @@ GUITest::GUITest(QWidget *parent)
 	ui.Start->setIcon(*startIcon);
 	ui.Start->show();
 	ui.Start->setIconSize(QSize(48, 45));
-	ui.Stop->setIcon(*stopIcon);
+	/*ui.Stop->setIcon(*stopIcon);
 	ui.Stop->show();
-	ui.Stop->setIconSize(QSize(48, 45));
+	ui.Stop->setIconSize(QSize(48, 45));*/
 
 	connect(timer, SIGNAL(timeout()), this, SLOT(updateTime()));
 	connect(ui.Start, SIGNAL(clicked()), this, SLOT(on_Start_clicked()));
-	connect(ui.Stop, SIGNAL(clicked()), this, SLOT(on_Stop_clicked()));
+	//connect(ui.Stop, SIGNAL(clicked()), this, SLOT(on_Stop_clicked()));
 	connect(ui.pushButton_5, SIGNAL(clicked()), this, SLOT(on_CheckAns()));
 	connect(ui.pushButton_3, SIGNAL(clicked()), this, SLOT(on_Clue()));
 	connect(ui.pushButton_4, SIGNAL(clicked()), this, SLOT(Restart()));
@@ -93,6 +93,10 @@ void GUITest::updateTime()
 
 void GUITest::on_Start_clicked() 
 {
+	if (!m_hasStarted)
+	{
+		return;
+	}
 	if (!isStart) //尚未开始 开始计时
 	{
 		ui.Start->setIcon(*pauseIcon);
@@ -161,13 +165,13 @@ void GUITest::showNumber()
 				ui.textEdit[i][j]->setText(str);
 				if (m_fillBlack[i * GRIDSIZE + j] == 0)       //此时要用蓝色字体
 				{
-					ui.textEdit[i][j]->setStyleSheet(QString::fromUtf8("font: 23pt \"\351\273\221\344\275\223\";""border: 1px solid grey;color:blue"));
+					ui.textEdit[i][j]->setStyleSheet(QString::fromUtf8("font: 21pt \"\351\273\221\344\275\223\";""border: 1px solid grey;color:blue"));
 					ui.textEdit[i][j]->setAlignment(Qt::AlignCenter);
 					ui.textEdit[i][j]->setReadOnly(false);
 				}
 				else
 				{
-					ui.textEdit[i][j]->setStyleSheet(QString::fromUtf8("font: 23pt \"\351\273\221\344\275\223\";"));
+					ui.textEdit[i][j]->setStyleSheet(QString::fromUtf8("font: 21pt \"\351\273\221\344\275\223\";"));
 					ui.textEdit[i][j]->setAlignment(Qt::AlignCenter);
 					ui.textEdit[i][j]->setReadOnly(true);
 				}
@@ -315,7 +319,7 @@ void GUITest::on_Clue()
 
 		QString str = QString::number(num, 10);
 		ui.textEdit[line][col]->setText(str);
-		ui.textEdit[line][col]->setStyleSheet(QString::fromUtf8("font: 23pt \"\351\273\221\344\275\223\";""border: 1px solid grey"));     //这里的边框或许要设置一下
+		ui.textEdit[line][col]->setStyleSheet(QString::fromUtf8("font: 21pt \"\351\273\221\344\275\223\";""border: 1px solid grey"));     //这里的边框或许要设置一下
 		ui.textEdit[line][col]->setAlignment(Qt::AlignCenter);
 		ui.textEdit[line][col]->setReadOnly(true);
 		informSuccess = true;
@@ -360,13 +364,6 @@ void GUITest::SetMode()
 	save_sudoku[0][i] = posi;
 	}
 
-	/*save_sudoku[0][0] = 5;
-	save_sudoku[0][1] = 2;
-	save_sudoku[0][2] = 9;
-	save_sudoku[0][3] = 1;
-	save_sudoku[0][4] = 7;*/
-
-
 	int reduce;
 	int empty;
 	switch (m_mode)
@@ -398,9 +395,9 @@ void GUITest::SetMode()
 		m_backup[i] = save_sudoku[0][i];
 	}
 
+	m_hasStarted = true;
 	temp.solve(save_sudoku[0], m_result);
-	showNumber();
-
+	showNumber();	
 }
 
 int GUITest::GetMode()
@@ -424,31 +421,28 @@ void GUITest::SetModeEasy()
 {
 
 	this->m_mode = EASY;
-	m_hasStarted = true;
-	this->setWindowTitle(QApplication::translate("GUITestClass", "Sudoku Game. Mode:Easy", Q_NULLPTR));
+	this->setWindowTitle(QApplication::translate("GUITestClass", "Sudoku Game.    Mode:Easy", Q_NULLPTR));
+	SetMode();
 	on_Stop_clicked();
 	on_Start_clicked();
-	SetMode();
 }
 
 void GUITest::SetModeNormal()
 {
 	this->m_mode = MIDDLE;
-	m_hasStarted = true;
-	this->setWindowTitle(QApplication::translate("GUITestClass", "Sudoku Game. Mode:Normal", Q_NULLPTR));
+	this->setWindowTitle(QApplication::translate("GUITestClass", "Sudoku Game.    Mode:Normal", Q_NULLPTR));
+	SetMode();
 	on_Stop_clicked();
 	on_Start_clicked();
-	SetMode();
 }
 
 void GUITest::SetModeHard()
 {
 	this->m_mode = HARD;
-	m_hasStarted = true;
-	this->setWindowTitle(QApplication::translate("GUITestClass", "Sudoku Game. Mode:Hard", Q_NULLPTR));
+	this->setWindowTitle(QApplication::translate("GUITestClass", "Sudoku Game.    Mode:Hard", Q_NULLPTR));
+	SetMode();
 	on_Stop_clicked();
 	on_Start_clicked();
-	SetMode();
 }
 
 //用户最优记录槽函数
@@ -547,11 +541,12 @@ void GUITest::RestartShow()
 	{
 		for (int j = 0; j < GRIDSIZE; j++)
 		{
+			ui.textEdit[i][j]->setReadOnly(false);
 			if (m_backup[i * GRIDSIZE + j] > 0)
 			{
 				QString str = QString::number(m_fill[i * GRIDSIZE + j], 10);
 				ui.textEdit[i][j]->setText(str);
-				ui.textEdit[i][j]->setStyleSheet(QString::fromUtf8("font: 23pt \"\351\273\221\344\275\223\";"));
+				ui.textEdit[i][j]->setStyleSheet(QString::fromUtf8("font: 21pt \"\351\273\221\344\275\223\";"));
 				ui.textEdit[i][j]->setAlignment(Qt::AlignCenter);
 				ui.textEdit[i][j]->setReadOnly(true);
 			}
