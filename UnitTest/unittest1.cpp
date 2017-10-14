@@ -154,6 +154,10 @@ namespace ModeTest
 		{
 			int result[100][CELL];
 			int grid[GRIDSIZE][GRIDSIZE];
+
+			set<string> container;
+			string inserted;
+
 			Core core;
 			core.generate(100, result);
 			for (int i = 0; i < 100; i++)
@@ -163,11 +167,17 @@ namespace ModeTest
 					for (int k = 0; k < GRIDSIZE; k++)
 					{
 						grid[j][k] = result[i][j * GRIDSIZE + k];
+						assert(!(grid[j][k] <= 9 && grid[j][k] >= 1));
+						inserted.push_back(grid[j][k] + '0');
 					}
 				}
 				Assert::IsTrue(valid(grid));
+				container.insert(inserted);
+				inserted.clear();
 			}
+			assert(container.size() == 100);
 		}
+
 		//-n -m 2 测试
 		TEST_METHOD(TestMethod1)
 		{
@@ -355,5 +365,162 @@ namespace ModeTest
 				assert(valid(grid));
 			}
 		}
+
+
+
+		//以下是关于异常的测试
+		//参数个数异常
+		TEST_METHOD(TestMethod8)
+		{
+			char* command[8] = {"sudoku.exe","-n","100","-n","-r","-s","-m","-d"};
+			try {
+				main(9,(char**)command);
+			}
+			catch (exception& e)
+			{
+				cout << e.what();
+			}
+		}
+
+		//文件不存在异常
+		TEST_METHOD(TestMethod9)
+		{
+			char c1[20] = { "sudoku.exe" };
+			char c2[20] = { "-s" };
+			char c3[20] = {"NotExist.txt"};
+			char ** command;
+			
+			command[0] = c1;
+			command[1] = c2;
+			command[2] = c3;
+			try
+			{
+				main(3,command);
+			}
+			catch (exception& e)
+			{
+				cout << e.what();
+			}
+		}
+
+		//数字超出范围
+		TEST_METHOD(TestMethod10)
+		{
+			//-c
+			char* command[20] = { "sudoku.exe","-c","100000000" };
+			try
+			{
+				main(3, (char**)command);
+			}
+			catch (exception& e)
+			{
+				cout << e.what();
+			}
+
+			//-n
+			char* command1[20] = {"sudoku.txt","-n","10001","-m","1"};
+			try
+			{
+				main(5, (char**)command1);
+			}
+			catch (exception& e)
+			{
+				cout << e.what();
+			}
+
+			//-m（模式错误）
+			char* command2[20] = { "sudoku.txt","-n","1000","-m","4" };
+			try
+			{
+				main(5, (char**)command2);
+			}
+			catch (exception& e)
+			{
+				cout << e.what();
+			}
+
+			//-r
+			char* command3[20] = {"sudoku.exe","-n","10","-r","50~56"};
+			try
+			{
+				main(3, (char**)command3);
+			}
+			catch (exception& e)
+			{
+				cout << e.what();
+			}
+		}
+
+		//关于R的参数存在异常
+		TEST_METHOD(TestMethod11)
+		{
+			//中间连接符不是~
+			char command[][20] = { "sudoku.exe","-n","10","-r","20-55"};
+			try
+			{
+				main(5, (char**)command);
+			}
+			catch (exception& e)
+			{
+				cout << e.what();
+			}
+
+			//大小颠倒
+			char command1[][20] = { "sudoku.exe","-n","10","-r","30~25" };
+			try
+			{
+				main(5, (char**)command);
+			}
+			catch (exception& e)
+			{
+				cout << e.what();
+			}
+		}
+
+		//命令中存在不合法的字符
+		TEST_METHOD(TestMethod12)
+		{
+			char command[][20] = { "sudoku.exe","-nn","10","-r","20-55" };
+			try
+			{
+				main(5, (char**)command);
+			}
+			catch (exception& e)
+			{
+				cout << e.what();
+			}
+		}
+
+		
+		//数独无解
+		TEST_METHOD(TestMethod13)
+		{
+			char command[][20] = { "sudoku.exe","-s","puzzle.txt"};
+			try
+			{
+				main(3, (char**)command);
+			}
+			catch (exception& e)
+			{
+				cout << e.what();
+			}
+		}
+
+		//数独中存在不合法的数字
+		TEST_METHOD(TestMethod14)
+		{
+			char command[][20] = { "sudoku.exe","-s","puzzle.txt" };
+			try
+			{
+				main(3, (char**)command);
+			}
+			catch (exception& e)
+			{
+				cout << e.what();
+			}
+
+		}
+
+
 	};
 }
