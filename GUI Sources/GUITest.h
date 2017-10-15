@@ -25,7 +25,7 @@ public:
 	int GetNormal();
 	int GetHard();
 
-	private slots:
+private slots:
 	void updateTime();
 	void on_Start_clicked();
 	void on_Stop_clicked();
@@ -43,6 +43,7 @@ public:
 	void BestRecordEasy();
 	void BestRecordNormal();
 	void BestRecordHard();
+	void HELP();
 
 private:
 	int m_mode;
