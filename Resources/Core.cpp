@@ -1,6 +1,6 @@
 #include "Core.h"
 #include "stdafx.h"
-
+  
 //随机性，性能
 
 Core::Core()
