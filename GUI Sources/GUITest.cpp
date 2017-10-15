@@ -64,6 +64,7 @@ GUITest::GUITest(QWidget *parent)
 	connect(ui.pushButton_5, SIGNAL(clicked()), this, SLOT(on_CheckAns()));
 	connect(ui.pushButton_3, SIGNAL(clicked()), this, SLOT(on_Clue()));
 	connect(ui.pushButton_4, SIGNAL(clicked()), this, SLOT(Restart()));
+	connect(ui.pushButton_help, SIGNAL(clicked()), this, SLOT(HELP()));
 	//每个小格子的槽函数
 	for (int i = 0; i < GRIDSIZE; i++)
 	{
@@ -82,6 +83,7 @@ GUITest::GUITest(QWidget *parent)
 	connect(ui.actionEasy_2, SIGNAL(triggered()), this, SLOT(BestRecordEasy()));
 	connect(ui.actionNormal_2, SIGNAL(triggered()), this, SLOT(BestRecordNormal()));
 	connect(ui.actionHard_2, SIGNAL(triggered()), this, SLOT(BestRecordHard()));
+	
 	ui.focusIn = NULL;
 }
 
@@ -95,6 +97,8 @@ void GUITest::on_Start_clicked()
 {
 	if (!m_hasStarted)
 	{
+		SetModeEasy();
+		m_hasStarted = true;
 		return;
 	}
 	if (!isStart) //尚未开始 开始计时
@@ -558,4 +562,17 @@ void GUITest::RestartShow()
 			}
 		}
 	}
+}
+
+void GUITest::HELP()
+{
+	/*QMessageBox msgBox(this);
+	msgBox.setWindowTitle("HELP");
+	msgBox.setGeometry(100, 100, 200, 100);*/  
+	QMessageBox::information(
+		this,tr("Help"),tr("  Rules about sudoku:\n The game has 81 Cells,as the game starts, it will show some numbers\n and some empty blocks,what you should do is fill the blocks with\n one number in 1-9\
+ to let every line,every column and every small nine \n cells has number 1-9\n"));
+	
+	//QMessageBox::information(this, tr("Record"), tr("Get to create your record !!"));
+	//QMessageBox::information(this, tr("HELP"), tr("HELP !!"));
 }
