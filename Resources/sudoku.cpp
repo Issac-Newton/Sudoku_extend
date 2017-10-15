@@ -103,7 +103,6 @@ int main(int argc, char** argv)
 	catch (NoSolutionException& NSE)
 	{
 		cout << NSE.m_msg;
-		help();
 		return 1;
 	}
 	catch (IllegalNumberException& INE)

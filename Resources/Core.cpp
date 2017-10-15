@@ -1,6 +1,7 @@
 #include "Core.h"
 #include "stdafx.h"
 
+//随机性，性能
 
 Core::Core()
 {
@@ -23,18 +24,26 @@ int Core::TraceBack(int pos, int number, int& count, int result[][CELL],bool isS
 		int x = pos / GRIDSIZE;
 		int y = pos % GRIDSIZE;
 
-		int base = x / 3 * 3;
-		for (int i = 0; i < GRIDSIZE; i++)         // try to fill the pos from 1-9
+		if (m_grid[x][y] == UNKNOWN)
 		{
-			m_grid[x][y] = (i + base) % GRIDSIZE + 1;
-			if (IsValid(pos,isSolve))               // if the number is valid
+			int temp = x / 3 * 3;
+			for (int i = 0; i < GRIDSIZE; i++)         // try to fill the pos from 1-9
 			{
-				if (TraceBack(pos + 1, number, count, result, isSolve) == 1)       // try to fill next pos
+				m_grid[x][y] = (i + temp) % GRIDSIZE + 1;
+
+				if (IsValid(pos, isSolve))               // if the number is valid
 				{
-					return 1;
+					if (TraceBack(pos + 1, number, count, result, isSolve) == 1)       // try to fill next pos
+					{
+						return 1;
+					}
 				}
+				m_grid[x][y] = UNKNOWN;
 			}
-			m_grid[x][y] = UNKNOWN;
+		}
+		else
+		{
+			return TraceBack(pos + 1, number, count, result, isSolve);
 		}
 	}
 	return 0;
@@ -89,12 +98,15 @@ bool Core::solve(int puzzle[CELL], int solution[CELL]) throw (NoSolutionExceptio
 		}
 	}
 
-if (TraceBackSolve(0))
-{
-	CopySudoku(solution, m_grid);
-	return true;
-}
-throw NoSolutionException("The sudoku has no solution.\n\n");
+	if (TraceBackSolve(0))
+	{
+		CopySudoku(solution, m_grid);
+		if (valid(m_grid))
+		{
+			return true;
+		}
+	}
+	throw NoSolutionException("The sudoku has no solution.\n\n");
 }
 
 bool Core::IsValid(int pos, bool isSolve)
@@ -169,6 +181,7 @@ void Core::generate(int number, int result[][CELL]) throw (NumberOutOfBoundExcep
 		throw NumberOutOfBoundException("The number after -c is not in the range.\n\n");
 	}
 	int count = 0;
+	
 	TraceBack(0, number, count, result, false);
 }
 
@@ -189,19 +202,18 @@ void Core::generate(int number, int mode, int result[][CELL]) throw(NumberOutOfB
 	switch(mode)
 	{
 	case EASY:
-		reduce = 33 + rand() % 8;
+		reduce = 40 + rand() % 8;
 		break;
 	case MIDDLE:
-		reduce = 25 + rand() % 8;
+		reduce = 32 + rand() % 8;
 		break;
 	case HARD:
-		reduce = 17 + rand() % 8;
+		reduce = 24 + rand() % 8;
 		break;
 	default:
 		break;
 	}
 	empty = CELL - reduce;
-	cout << empty << " " << reduce << endl;
 	generate(number,result);
 
 	for (int i = 0; i < number; i++)
@@ -220,47 +232,73 @@ void Core::generate(int number, int mode, int result[][CELL]) throw(NumberOutOfB
 
 void Core::generate(int number, int lower, int upper, bool unique, int result[][CELL]) throw (NumberOutOfBoundException)  //-n -r (-u)
 {
-	if ((number < 1) || (number > MAX_N))
+	/*if ((number < 1) || (number > MAX_N))
 	{
 		throw NumberOutOfBoundException("The number after -n is not in the range.\n\n");
-	}
+	}*/
 
-	if (((upper > EMPTY_UPPER) || (upper < EMPTY_LOWER))
+	if ((number < 1))
+	{
+		throw NumberOutOfBoundException("The number after -n is smaller than minimum 1.\n\n");
+	}
+	if ((number < 1) || (number > MAX_N))
+	{
+		throw NumberOutOfBoundException("The number after -n is bigger than maximum 10000.\n\n");
+	}
+	/*if (((upper > EMPTY_UPPER) || (upper < EMPTY_LOWER))
 		|| ((lower > EMPTY_UPPER) || (lower < EMPTY_LOWER)))
 	{
 		throw NumberOutOfBoundException("The number after -r is not in the range.\n\n");
+	}*/
+	if ((upper > EMPTY_UPPER))
+	{
+		throw NumberOutOfBoundException("The number of upper is bigger than maximum 50.\n\n");
+	}
+	if ((upper < EMPTY_LOWER))
+	{
+		throw NumberOutOfBoundException("The number of upper is smaller than minimum 20.\n\n");
+	}
+
+	if ((lower > EMPTY_UPPER))
+	{
+		throw NumberOutOfBoundException("The number of lower is bigger than maximum 50.\n\n");
+	}
+	if ((lower < EMPTY_LOWER))
+	{
+		throw NumberOutOfBoundException("The number of lower is smaller than minimum 20.\n\n");
 	}
 	if((lower > upper))
 	{
 		throw NumberOutOfBoundException("The range after -r is not correct.\n\n");
 	}
+
 	int empty;
 	empty = (upper == lower) ? upper : (rand() % (upper - lower + 1) + lower);
-	generate(number,result);
 
-	stack<int> posi;
-//	int grid[GRIDSIZE][GRIDSIZE];
+	bool choosen[10];
+	memset(choosen, 0, sizeof(choosen));
+	srand(time(0));
+	for (int i = 0; i < 5; i++)
+	{
+		int posi = rand() % 9 + 1;
+		while (choosen[posi])
+		{
+			posi = rand() % 9 + 1;
+		}
+		choosen[posi] = true;
+		m_grid[0][i] = posi;
+	}
+
+	/*for (int i = 0; i < GRIDSIZE; i++)
+	{
+		m_grid[0][i] = result[0][i];
+	}*/
+
+	int COUNT = 0;
+	generate(number, result);
+
 	for (int i = 0; i < number; i++)
 	{
-		//int count = 0;
-		/*if (unique)
-		{
-			for (int col = 0; col < GRIDSIZE; col++)
-			{
-				for (int row = 0; row < GRIDSIZE; row++)
-				{
-					m_grid[col][row] = result[i][col*GRIDSIZE + row];
-					grid[col][row] = result[i][col*GRIDSIZE + row];	
-				}
-			}
-
-			DigPos(empty, count, result[i],posi,-1,grid);
-			CopySudoku(result[i], grid);
-			while (posi.size())
-			{
-				posi.pop();
-			}
-		}*/
 		if (unique)
 		{
 			while (true)
@@ -347,4 +385,52 @@ void Core::CopySudoku(int result[CELL], int temp[GRIDSIZE][GRIDSIZE])
 	{
 		result[i] = temp[i / GRIDSIZE][i%GRIDSIZE];
 	}
+}
+
+
+bool Core::valid(int sudoku[][GRIDSIZE]) {
+	for (int i = 0; i < GRIDSIZE; i++) {
+		bool line_exist[10];
+		memset(line_exist, 0, sizeof(line_exist));
+		for (int j = 0; j < GRIDSIZE; j++) {
+			if ((i == 0 && (j == 0 || j == 3 || j == 6)) || (i == 3 && (j == 0 || j == 3 || j == 6))
+				|| (i == 6 && (j == 0 || j == 3 || j == 6))) {
+				bool exist[10];
+				memset(exist, 0, sizeof(exist));
+				for (int cell_i = 0; cell_i < 3; cell_i++) {
+					for (int cell_j = 0; cell_j < 3; cell_j++) {
+						exist[sudoku[cell_i + i][cell_j + j]] = true;
+					}
+				}
+
+				for (int exist_i = 1; exist_i < 10; exist_i++) {
+					if (!exist[exist_i])
+						return false;
+				}
+			}
+
+			line_exist[sudoku[i][j]] = true;
+		}
+
+		for (int j = 1; j <= GRIDSIZE; j++) {
+			if (!line_exist[j]) {
+				return false;
+			}
+		}
+	}
+
+	for (int i = 0; i < GRIDSIZE; i++) {
+		bool col_exist[10];
+		memset(col_exist, 0, sizeof(col_exist));
+		for (int j = 0; j < GRIDSIZE; j++) {
+			col_exist[sudoku[j][i]] = true;
+		}
+		for (int j = 1; j <= GRIDSIZE; j++) {
+			if (!col_exist[j]) {
+				return false;
+			}
+		}
+	}
+
+	return true;
 }
