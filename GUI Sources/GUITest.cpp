@@ -568,7 +568,7 @@ void GUITest::HELP()
 {
 	/*QMessageBox msgBox(this);
 	msgBox.setWindowTitle("HELP");
-	msgBox.setGeometry(100, 100, 200, 100);*/
+	msgBox.setGeometry(100, 100, 200, 100);*/  
 	QMessageBox::information(
 		this,tr("Help"),tr("  Rules about sudoku:\n The game has 81 Cells,as the game starts, it will show some numbers\n and some empty blocks,what you should do is fill the blocks with\n one number in 1-9\
  to let every line,every column and every small nine \n cells has number 1-9\n"));

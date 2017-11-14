@@ -1,7 +1,5 @@
 #include "Core.h"
 #include "stdafx.h"
-  
-//随机性，性能
 
 Core::Core()
 {
@@ -232,15 +230,40 @@ void Core::generate(int number, int mode, int result[][CELL]) throw(NumberOutOfB
 
 void Core::generate(int number, int lower, int upper, bool unique, int result[][CELL]) throw (NumberOutOfBoundException)  //-n -r (-u)
 {
-	if ((number < 1) || (number > MAX_N))
+	/*if ((number < 1) || (number > MAX_N))
 	{
 		throw NumberOutOfBoundException("The number after -n is not in the range.\n\n");
-	}
+	}*/
 
-	if (((upper > EMPTY_UPPER) || (upper < EMPTY_LOWER))
+	if ((number < 1))
+	{
+		throw NumberOutOfBoundException("The number after -n is smaller than minimum 1.\n\n");
+	}
+	if ((number < 1) || (number > MAX_N))
+	{
+		throw NumberOutOfBoundException("The number after -n is bigger than maximum 10000.\n\n");
+	}
+	/*if (((upper > EMPTY_UPPER) || (upper < EMPTY_LOWER))
 		|| ((lower > EMPTY_UPPER) || (lower < EMPTY_LOWER)))
 	{
 		throw NumberOutOfBoundException("The number after -r is not in the range.\n\n");
+	}*/
+	if ((upper > EMPTY_UPPER))
+	{
+		throw NumberOutOfBoundException("The number of upper is bigger than maximum 50.\n\n");
+	}
+	if ((upper < EMPTY_LOWER))
+	{
+		throw NumberOutOfBoundException("The number of upper is smaller than minimum 20.\n\n");
+	}
+
+	if ((lower > EMPTY_UPPER))
+	{
+		throw NumberOutOfBoundException("The number of lower is bigger than maximum 50.\n\n");
+	}
+	if ((lower < EMPTY_LOWER))
+	{
+		throw NumberOutOfBoundException("The number of lower is smaller than minimum 20.\n\n");
 	}
 
 	if((lower > upper))
