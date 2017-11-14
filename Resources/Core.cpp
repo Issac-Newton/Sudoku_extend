@@ -1,8 +1,6 @@
 #include "Core.h"
 #include "stdafx.h"
 
-//随机性，性能
-
 Core::Core()
 {
 	memset(m_grid,0,sizeof(m_grid));
@@ -267,6 +265,7 @@ void Core::generate(int number, int lower, int upper, bool unique, int result[][
 	{
 		throw NumberOutOfBoundException("The number of lower is smaller than minimum 20.\n\n");
 	}
+
 	if((lower > upper))
 	{
 		throw NumberOutOfBoundException("The range after -r is not correct.\n\n");

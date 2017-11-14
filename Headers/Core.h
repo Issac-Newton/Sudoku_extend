@@ -23,4 +23,5 @@ private:
 	int TraceBack(int pos, int number, int& count, int result[][CELL],bool isSolve);
 	void CopySudoku(int result[CELL], int temp[GRIDSIZE][GRIDSIZE]);
 	bool IsSingleSolution(int tot, int& ans);
+	bool valid(int solution[][GRIDSIZE]);
 };
