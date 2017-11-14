@@ -68,7 +68,7 @@ int main(int argc, char** argv)
 
 			core.generate(handler.GetNumberN(), handler.GetLower(), handler.GetUpper(), handler.GetUnique(), resultN);
 			freopen_s(&ans,"sudoku.txt","w",stdout);
-			output(handler.GetNumberN(),2,ans);
+			output(2,handler.GetNumberN(),ans);
 			break;
 
 		case NU_CMD:
